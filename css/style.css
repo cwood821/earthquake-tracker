@@ -1,0 +1,280 @@
+@import url('https://fonts.googleapis.com/css?family=Poppins:300,400,700');
+
+/*
+  https://coolors.co/7f7a7b-a439cc-4817f6-e8dfe1-7fb069
+*/
+
+:root {
+  --white: ;
+  --dark: ;
+  --bright: ;
+
+}
+
+* {
+  font-family: 'Poppins', sans-serif;
+  box-sizing: border-box;
+}
+
+body, html {
+  padding: 0;
+  margin: 0;
+  background: #0A0710;
+  overflow: hidden;
+}
+
+.loading {
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  height: 100vh;
+  width: 100%;
+  background: #000;
+  transition: all 1s ease;
+}
+
+  .loading h1 {
+    width: 100%;
+    color: #fff;
+  }
+
+  .loading h2 {
+    width: 100%;
+    font-weight: 300;
+    color: #4817F6;
+  }
+
+.header {
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 60px;
+  width: 100%;
+  background: #0F0A19;
+  box-shadow: 0px 1px 4px rgba(10, 7, 17, 0.3);
+}
+
+  .site-logo {
+    padding-left: 0.75em;
+    display: inline-block;
+    color: #fff;
+  }
+
+  .site-logo:hover, .site-logo:active {
+    cursor: pointer;
+    animation: shake 0.82s cubic-bezier(.36,.07,.19,.97) both;
+    transform: translate3d(0, 0, 0);
+    backface-visibility: hidden;
+    perspective: 1000px;
+  }
+
+  .icon-holder {
+    text-align: center;
+    width: 80px;
+  }
+
+  .icon-holder i{
+    color: #fff;
+  }
+
+.sidebar {
+  z-index: 150;
+  display: flex;
+  flex-direction: row;
+  position: absolute;
+  top: 60px;
+  left: 0;
+  background: #fff;
+  height: calc(100vh - 60px);
+  max-height: calc(100vh - 60px);
+  width: 100%;
+  transition: all 0.5s ease-in-out;
+}
+
+  .card-titles {
+    position: fixed;
+    color: #7F7A7B;
+    font-size: 0.75rem;
+    background: #E8DFE1;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    justify-content: space-around;
+    text-align: left;
+    width: 100%;
+    padding: 1em;
+    box-shadow: 0px 1px 4px rgba(10, 7, 17, 0.25);
+  }
+
+    .card-title_mag {
+      width: 100px;
+      /*border-right: 1px solid #333;*/
+    }
+
+    .card-title_location {
+      width: 230px;
+      padding-left: 20px;
+    }
+
+    .card-title_time {
+      width: 70px;
+    }
+
+  .card-holder {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    height: calc(100% - 40px);
+    width: 100%;
+    width: 100vw;
+    top: 40px;
+    overflow-y: scroll;
+  }
+
+  .card {
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    justify-content: space-around;
+    width: 100%;
+    min-height: 80px;
+    border-bottom: 1px solid #E8DFE1;
+    border-left: 5px solid transparent;
+    padding: 1em;
+    clear: both;
+    transition: all 0.3s ease;
+  }
+
+  .card:hover, .card:active {
+    border-left: 5px solid #4817F6;
+    margin-left: 0px;
+    cursor: pointer;
+    background: rgba(72, 23, 246, 0.05);
+  }
+
+    .magnitude {
+      width: 100px;
+      font-weight: 700;
+      font-size: 2em;
+      color: #0F0A19;
+    }
+
+    .description {
+      padding: 0px 15px;
+      width: 230px;
+      font-size: 0.8rem;
+      font-weight: 300;
+      color: #7F7A7B;
+    }
+
+    .time {
+      width: 70px;
+      text-align: center;
+      padding: 0.35rem;
+      background: #504C57;
+      color: #fff;
+      font-size: 0.5rem;
+      border-radius: 6px;
+    }
+
+.map-container {
+  z-index: 50;
+  position: absolute;
+  top: 60px;
+  left: 0px;
+  height: 100%;
+  height: 100vh;
+  width: 100%;
+  width: 100vw;
+  width: calc(100%-10px);
+}
+
+#map {
+  z-index: 200;
+  height: 100vh;
+  height: calc(100vh - 60px);
+  width: 100vw;
+}
+
+.mapboxgl-popup a {
+  color: #4817F6;
+}
+
+.quaking {
+  animation: shake 0.82s cubic-bezier(.36,.07,.19,.97) both;
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+  animation-iteration-count: infinite;
+}
+
+/* https://css-tricks.com/snippets/css/shake-css-keyframe-animation/ */
+@keyframes shake {
+  10%, 90% {
+    transform: translate3d(-1px, 0, 0);
+  }
+
+  20%, 80% {
+    transform: translate3d(2px, 0, 0);
+  }
+
+  30%, 50%, 70% {
+    transform: translate3d(-4px, 0, 0);
+  }
+
+  40%, 60% {
+    transform: translate3d(4px, 0, 0);
+  }
+}
+
+
+@media screen and (min-width: 500px) {
+
+  .icon-holder {
+    display: none;
+  }
+
+  .sidebar {
+    z-index: 150;
+    display: flex;
+    flex-direction: row;
+    position: absolute;
+    top: 60px;
+    left: 0;
+    background: #fff;
+    height: calc(100% - 60px);
+    max-height: calc(100% - 60px);
+    width: 350px;
+  }
+
+  .map-container {
+    z-index: 180; /* on desktop, must be higher; opposite on mobile */
+    position: absolute;
+    top: 60px;
+    left: 350px;
+    height: 100%;
+    height: 100vh;
+    width: calc(100%-350px);
+  }
+
+  .card-titles {
+    width: 350px;
+  }
+
+    .card {
+      width: 350px;
+    }
+
+}

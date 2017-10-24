@@ -1,0 +1,32 @@
+{
+  "name": "clear",
+  "version": "1.0.0",
+  "description": "An application to show recent earthquakes from USGS data.",
+  "main": "index.js",
+  "scripts": {
+    "build": "webpack"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cwood821/earthquake-tracker.git"
+  },
+  "keywords": [
+    "validation"
+  ],
+  "author": "Christian Wood",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/cwood821/earthquake-tracker/issues"
+  },
+  "homepage": "https://github.com/cwood821/earthquake-tracker#readme",
+  "devDependencies": {
+    "uglify-loader": "^2.0.0",
+    "uglifyjs-webpack-plugin": "^0.4.6"
+  },
+  "dependencies": {
+    "babel": "^6.23.0",
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "webpack": "^3.6.0"
+  }
+}

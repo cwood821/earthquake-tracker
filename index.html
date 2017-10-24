@@ -1,0 +1,54 @@
+<html>
+
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <link rel="icon" href="icon.png" />
+    <title>Earthquake Tracker</title>
+
+    <link href="css/style.css" rel="stylesheet">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" rel="stylesheet">
+    <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v0.37.0/mapbox-gl.js"></script>
+    <link href="https://api.tiles.mapbox.com/mapbox-gl-js/v0.37.0/mapbox-gl.css" rel="stylesheet" />
+  </head>
+
+  <body>
+    <div class="loading">
+      <h1>Earthquake Tracker</h1>
+      <h2 class="quaking">Loading</h2>
+    </div>
+
+  <div class="header">
+    <div class="logo-holder">
+      <a href="/"><span class="site-logo">Earthquake Tracker<span></a>
+    </div>
+    <div class="icon-holder">
+      <i class="fa fa-map-o" aria-hidden="true"></i>
+    </div>
+  </div>
+
+  <div class="sidebar">
+    <div class="card-titles">
+      <div class="card-title_mag">
+        Magnitude
+      </div>
+      <div class="card-title_location">
+        Location
+      </div>
+       <div class="card-title_time">
+        Time
+      </div>
+    </div>
+
+    <div class="card-holder">
+    </div>
+
+    </div>
+  </div>
+
+  <div class="map-container">
+      <div id="map"></div>
+  </div>
+
+  <script src="bundle.js"></script>
+</body>
+</html>
