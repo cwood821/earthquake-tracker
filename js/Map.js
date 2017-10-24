@@ -91,9 +91,7 @@ events.on("list-item-hovered", showPopup);
 
 
 function setQuakes(quakes) {
-  if (map.loaded()) {
-    map.getSource('quakeMarkers').setData(quakes);
-  }
+  map.getSource('quakeMarkers').setData(quakes);
 }
 
 events.on("quakes-fetched", setQuakes);

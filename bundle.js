@@ -213,9 +213,7 @@ __WEBPACK_IMPORTED_MODULE_1__Events__["a" /* default */].on("list-item-clicked",
 __WEBPACK_IMPORTED_MODULE_1__Events__["a" /* default */].on("list-item-hovered", showPopup);
 
 function setQuakes(quakes) {
-  if (map.loaded()) {
-    map.getSource('quakeMarkers').setData(quakes);
-  }
+  map.getSource('quakeMarkers').setData(quakes);
 }
 
 __WEBPACK_IMPORTED_MODULE_1__Events__["a" /* default */].on("quakes-fetched", setQuakes);
@@ -371,6 +369,8 @@ class QuakeCollection {
     let format = "geojson";
     let startTime = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
     let endtime = `${tomorrow.getFullYear()}-${tomorrow.getMonth() + 1}-${tomorrow.getDate()}`;
+    // timestamp to force non-caching
+    let timestamp = new Date();
 
     fetch(this.apiURL + `?format=${format}&starttime=${startTime}&endtime=${endtime}`) // Call the fetch function passing the url of the API as a parameter
     .then(resp => resp.json()).then(quakes => {
