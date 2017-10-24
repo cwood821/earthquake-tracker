@@ -356,11 +356,23 @@ class QuakeCollection {
 
   constructor() {
     this.quakes = [];
-    this.apiURL = "https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2017-10-23&endtime=2017-10-24";
+    this.apiURL = "https://earthquake.usgs.gov/fdsnws/event/1/query";
+
+    // ?format=geojson&starttime=2017-10-23&endtime=2017-10-24"
   }
 
   fetchQuakes() {
-    fetch(this.apiURL) // Call the fetch function passing the url of the API as a parameter
+    // Date placeholder
+    let today = new Date();
+    let tomorrow = new Date();
+    tomorrow.setDate(today.getDate() + 1);
+
+    // Formatted parameters for API call
+    let format = "geojson";
+    let startTime = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
+    let endtime = `${tomorrow.getFullYear()}-${tomorrow.getMonth() + 1}-${tomorrow.getDate()}`;
+
+    fetch(this.apiURL + `?format=${format}&starttime=${startTime}&endtime=${endtime}`) // Call the fetch function passing the url of the API as a parameter
     .then(resp => resp.json()).then(quakes => {
       this.quakes = quakes.features;
       __WEBPACK_IMPORTED_MODULE_0__Events__["a" /* default */].emit("quakes-fetched", quakes);
