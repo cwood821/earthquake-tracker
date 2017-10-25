@@ -61,7 +61,7 @@ var earthquakeTracker =
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 4);
+/******/ 	return __webpack_require__(__webpack_require__.s = 3);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -69,10 +69,9 @@ var earthquakeTracker =
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-// Events
-// A minimal Javascript publish subscribe implementation
-
-const events = {
+/** The events object is a basic implementation
+    of the publish and subscribe pattern. */
+const Events = {
   events: {},
   on: function (eventName, fn) {
     this.events[eventName] = this.events[eventName] || [];
@@ -80,38 +79,35 @@ const events = {
   },
   off: function (eventName, fn) {
     if (this.events[eventName]) {
-      for (var i = 0; i < this.events[eventName].length; i++) {
+      for (let i = 0; i < this.events[eventName].length; i += 1) {
         if (this.events[eventName][i] === fn) {
           this.events[eventName].splice(i, 1);
           break;
         }
-      };
+      }
     }
   },
   emit: function (eventName, data) {
     if (this.events[eventName]) {
-      this.events[eventName].forEach(function (fn) {
-        fn(data);
-      });
+      this.events[eventName].forEach(fn => fn(data));
     }
   }
 };
 
-/* harmony default export */ __webpack_exports__["a"] = (events);
+/* harmony default export */ __webpack_exports__["a"] = (Events);
 
 /***/ }),
 /* 1 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__QuakeCollection__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__QuakeCollection__ = __webpack_require__(4);
 
 
 // Holder for the singleton in this scope
-let singleton = undefined;
+let singleton;
 
 class QuakeCollectionSingleton {
-
   static getInstance() {
     if (singleton) {
       return singleton;
@@ -120,7 +116,6 @@ class QuakeCollectionSingleton {
       return singleton;
     }
   }
-
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = QuakeCollectionSingleton;
 
@@ -130,164 +125,60 @@ class QuakeCollectionSingleton {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Secrets__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__Events__ = __webpack_require__(0);
-
-
-
-// Set Mabbox access token
-mapboxgl.accessToken = __WEBPACK_IMPORTED_MODULE_0__Secrets__["a" /* default */].mapboxToken;
-
-const map = new mapboxgl.Map({
-  container: 'map', // container id
-  style: 'mapbox://styles/mapbox/dark-v9', //stylesheet location
-  center: [-74.50, 40], // starting position
-  zoom: 3 // starting zoom
-});
-
-map.on('load', setUpMap);
-
-function setUpMap() {
-  map.addSource('quakeMarkers', {
-    "type": "geojson",
-    "data": {
-      "type": "FeatureCollection",
-      "features": []
-    }
-  });
-  map.addLayer({
-    "id": "the-quakeMarkers",
-    "source": "quakeMarkers",
-    "type": "circle",
-    "paint": {
-      // "circle-radius": 6,
-      "circle-radius": {
-        "property": "mag",
-        "type": "exponential",
-        "stops": [[0, 2], [1, 4], [2, 6], [4, 8], [5, 10], [6, 12], [7, 12], [8, 14], [9, 16], [10, 18]]
-      },
-      "circle-color": "#4817F6"
-    }
-  });
-  __WEBPACK_IMPORTED_MODULE_1__Events__["a" /* default */].emit("map-loaded");
-};
-
-// 1000 * Math.pow(2.5, quake.properties.mag)
-
-map.on("mousemove", handleMapHover);
-map.on("click", handleMapClick);
-map.on("moveend", handleMapMove);
-
-function handleMapHover(e) {
-  // Ensure layer is present on map, in case loading is delayed
-  if (!map.getLayer("the-quakeMarkers")) {
-    return;
-  }
-  let features = map.queryRenderedFeatures(e.point, { layers: ["the-quakeMarkers"] });
-  // Change the cursor style as a UI indicator.
-  if (features.length > 0) {
-    map.getCanvas().style.cursor = 'pointer';
-    showPopup(features[0]);
-  } else {
-    map.getCanvas().style.cursor = '';
-  }
-}
-
-function handleMapClick(e) {
-  // Ensure layer is present on map, in case loading is delayed
-  if (!map.getLayer("the-quakeMarkers")) {
-    return;
-  }
-  let features = map.queryRenderedFeatures(e.point, { layers: ["the-quakeMarkers"] });
-  // Change the cursor style as a UI indicator.
-  features.length > 0 && flyTo(features[0]);
-}
-
-function handleMapMove(e) {
-  __WEBPACK_IMPORTED_MODULE_1__Events__["a" /* default */].emit("map-moved", map);
-}
-
-// Map event subscriptions
-__WEBPACK_IMPORTED_MODULE_1__Events__["a" /* default */].on("quakes-fetched", setQuakes);
-__WEBPACK_IMPORTED_MODULE_1__Events__["a" /* default */].on("list-item-clicked", flyTo);
-__WEBPACK_IMPORTED_MODULE_1__Events__["a" /* default */].on("list-item-hovered", showPopup);
-
-function setQuakes(quakes) {
-  map.getSource('quakeMarkers').setData(quakes);
-}
-
-__WEBPACK_IMPORTED_MODULE_1__Events__["a" /* default */].on("quakes-fetched", setQuakes);
-
-function flyTo(quake) {
-  map.flyTo({
-    center: [quake.geometry.coordinates[0], quake.geometry.coordinates[1]],
-    zoom: 11
-  });
-}
-
-let popup = new mapboxgl.Popup();
-
-function showPopup(quake) {
-  if (!quake) {
-    // if no data passed, bail
-    return;
-  }
-  popup.remove();
-  popup = new mapboxgl.Popup({ closeOnClick: false }).setLngLat([quake.geometry.coordinates[0], quake.geometry.coordinates[1]]).setHTML(`<h1>${quake.properties.mag}</h1>
-            <p><a href="${quake.properties.url}" target="_blank">More information</a>`).addTo(map);
-}
-
-/* harmony default export */ __webpack_exports__["a"] = (map);
-
-/***/ }),
-/* 3 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-
-// Icon to bind show / hide sidebar functionality to
-const iconToggle = document.querySelector(".icon-holder");
-iconToggle.addEventListener("click", toggleSidebar);
-
-// Show / hide sidebar on mobile based on click of icon
+/**
+* Return formatted date based on a given timestamp.
+* @param {Timestamp} timestamp A number to check against minimum and maximum
+* @returns {String}  A string formatted in either plain language or Month/Date
+*/
 function toggleSidebar() {
-  let sidebar = document.querySelector(".sidebar");
-  let sidebarLeft = sidebar.style.left;
-  let iconHTML = document.querySelector(".icon-holder").innerHTML;
-
-  if (sidebarLeft === "" || sidebarLeft === "200" || sidebarLeft === "0px") {
-    sidebarLeft = "200%";
-    iconHTML = '<i class="fa fa-list" aria-hidden="true"></i>';
+  const sidebar = document.querySelector(".sidebar");
+  const icon = document.querySelector(".icon-holder");
+  if (sidebar.classList.contains("sidebar-hide")) {
+    icon.innerHTML = `<i class="fa fa-list" aria-hidden="true"></i>`;
   } else {
-    sidebarLeft = "0";
-    iconHTML = '<i class="fa fa-map-o" aria-hidden="true"></i>';
+    icon.innerHTML = `<i class="fa fa-map-o" aria-hidden="true"></i>`;
   }
+  sidebar.classList.toggle("sidebar-hide");
 }
 
-// Return formatted date based on a given timestamp.
-// If the timestamp is from today, it will return "Today", otherwise
-// Month/Day format
+/**
+* Return formatted date based on a given timestamp.
+* @param {Timestamp} timestamp A number to check against minimum and maximum
+* @returns {String}  A string formatted in either plain language or Month/Date
+*/
 function formatTime(timestamp) {
   const dateTime = new Date(timestamp);
   return dateTime.getDay() == new Date().getDay() ? "Today" : `${dateTime.getMonth() + 1}/${dateTime.getDate()}`;
 }
 
+/**
+* Determine if a given value is between minimum and maximum value, exclusive
+* @param {Number} value A number to check against minimum and maximum
+* @param {Number} minimum The lower bounding number
+* @param {GeoJSON} maximum The upper bounding number
+* @returns {Boolean} True if the given value is between the bounds
+*/
 function isBetween(value, minimum, maximum) {
   return value < maximum && value > minimum;
 }
 
-// Takes map northeast and southwest map boundaries
-// as [lng, lat]. Third parameter is a GeoJSON feature
-// for comparison
+/**
+* Determine if a given GeoJSON feature is in the bounding box of
+* the bounding box created by passed NE and SW coordinates
+* @param {Array} neCoords An array representing Northeast point of box
+* @param {Array} swCoords An array representing Soutwest point of box
+* @param {GeoJSON} obj A GeoJSON feature
+* @returns {Boolean} True if the obj is within bounds
+*/
 function inBounds(neCoords, swCoords, obj) {
   // Nice pointers to map boundaries
-  var mapTopLat = neCoords[1];
-  var mapBottomLat = swCoords[1];
-  var mapLeftLng = swCoords[0];
-  var mapRightLng = neCoords[0];
+  const mapTopLat = neCoords[1];
+  const mapBottomLat = swCoords[1];
+  const mapLeftLng = swCoords[0];
+  const mapRightLng = neCoords[0];
   // Nice pointers to station coordinates
-  var objLng = obj.geometry.coordinates[0];
-  var objLat = obj.geometry.coordinates[1];
+  const objLng = obj.geometry.coordinates[0];
+  const objLat = obj.geometry.coordinates[1];
   // Check bounding longitude and latittude against object
   if (isBetween(objLng, mapLeftLng, mapRightLng) && isBetween(objLat, mapBottomLat, mapTopLat)) {
     return true;
@@ -302,56 +193,59 @@ function inBounds(neCoords, swCoords, obj) {
 });
 
 /***/ }),
-/* 4 */
+/* 3 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__QuakeCollectionSingleton__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__Sidebar__ = __webpack_require__(7);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__Map__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__Events__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__Components_CardList__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__Events__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__Utils__ = __webpack_require__(2);
 
 
 
 
 
 const quakeCollection = __WEBPACK_IMPORTED_MODULE_0__QuakeCollectionSingleton__["a" /* default */].getInstance();
-const sidebar = new __WEBPACK_IMPORTED_MODULE_1__Sidebar__["a" /* default */](".card-holder");
+const cardList = new __WEBPACK_IMPORTED_MODULE_1__Components_CardList__["a" /* default */](".card-holder");
+// Icon to bind show / hide sidebar functionality to
+const iconToggle = document.querySelector(".icon-holder");
+iconToggle.addEventListener("click", __WEBPACK_IMPORTED_MODULE_3__Utils__["a" /* default */].toggleSidebar);
 
-// listen for map to load, then fetch quakes
-__WEBPACK_IMPORTED_MODULE_3__Events__["a" /* default */].on("map-loaded", () => {
-  quakeCollection.fetchQuakes();
-});
-
-// When quakes are fetched, show the application
-__WEBPACK_IMPORTED_MODULE_3__Events__["a" /* default */].on("quakes-fetched", quakes => {
-  showApplication();
-});
-
-__WEBPACK_IMPORTED_MODULE_3__Events__["a" /* default */].on("map-moved", sidebar.render.bind(sidebar));
-
-function showApplication() {
+/**
+* Start the application by hiding load screen and rendering the UI
+*/
+function startApplication() {
   // Hide the loading overlay
   document.querySelector(".loading").style.top = "-200%";
-  // Render the sidebar
-  sidebar.render();
+  // Render the cardList
+  cardList.render();
+  return true;
 }
 
+// Listen for map to load, then fetch quakes
+__WEBPACK_IMPORTED_MODULE_2__Events__["a" /* default */].on("map-loaded", () => {
+  quakeCollection.fetchQuakes();
+});
+// When quakes are fetched, show the application
+__WEBPACK_IMPORTED_MODULE_2__Events__["a" /* default */].on("quakes-fetched", startApplication);
+// Re-render the cardList to show quakes in map boundaries
+__WEBPACK_IMPORTED_MODULE_2__Events__["a" /* default */].on("map-moved", cardList.render.bind(cardList));
+
 /***/ }),
-/* 5 */
+/* 4 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Events__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__Map__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__Utils__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__Components_Map__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__Utils__ = __webpack_require__(2);
 
 
 
 
 class QuakeCollection {
-
   constructor() {
     this.quakes = [];
     this.apiURL = "https://earthquake.usgs.gov/fdsnws/event/1/query";
@@ -384,20 +278,20 @@ class QuakeCollection {
   }
 
   getAllVisible() {
-    let neCoords = __WEBPACK_IMPORTED_MODULE_1__Map__["a" /* default */].getBounds().getNorthEast().toArray();
-    let swCoords = __WEBPACK_IMPORTED_MODULE_1__Map__["a" /* default */].getBounds().getSouthWest().toArray();
+    let neCoords = __WEBPACK_IMPORTED_MODULE_1__Components_Map__["a" /* default */].getBounds().getNorthEast().toArray();
+    let swCoords = __WEBPACK_IMPORTED_MODULE_1__Components_Map__["a" /* default */].getBounds().getSouthWest().toArray();
     return this.quakes.filter(quake => __WEBPACK_IMPORTED_MODULE_2__Utils__["a" /* default */].inBounds(neCoords, swCoords, quake));
   }
 
   getVisibleByIndex(index) {
     return this.getAllVisible()[index];
   }
-
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = QuakeCollection;
 
 
 /***/ }),
+/* 5 */,
 /* 6 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -415,34 +309,54 @@ const secrets = {
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__QuakeCollectionSingleton__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__Events__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__Utils__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__Utils__ = __webpack_require__(2);
 
 
 
 
-class Sidebar {
-
+/** Class representing a list of cards. */
+class CardList {
+  /**
+  * Create a point.
+  * @param {String} selector - The CSS selector the DOM element that will hold the list of cards
+  */
   constructor(selector) {
     this.element = document.querySelector(selector);
 
-    this.element.addEventListener("click", this.handleClick.bind(this));
-    this.element.addEventListener("mouseover", this.handleHover.bind(this));
+    this.element.addEventListener("click", CardList.handleClick.bind(this));
+    this.element.addEventListener("mouseover", CardList.handleHover.bind(this));
   }
 
-  handleClick(e) {
-    let el = this.getCardFromEvent(e);
+  /**
+  * Handle the click of a card in the list. Uses event propogation.
+  * @param {Event} e - The event that propogates through this.element
+  * @returns {Object} - A reference to the element that was clicked
+  */
+  static handleClick(e) {
+    const el = CardList.getCardFromEvent(e);
     __WEBPACK_IMPORTED_MODULE_1__Events__["a" /* default */].emit("list-item-clicked", __WEBPACK_IMPORTED_MODULE_0__QuakeCollectionSingleton__["a" /* default */].getInstance().getVisibleByIndex(el.dataset.quakeId));
+    return el;
   }
 
-  handleHover(e) {
-    let el = this.getCardFromEvent(e);
-    if (!el) {
-      return;
-    }
+  /**
+  * Handle user hover over a card in the list. Uses event propogation.
+  * @param {Event} e - The event that propogates through this.element
+  * @returns {Object} - A reference to the element that was hovered over
+  */
+  static handleHover(e) {
+    const el = CardList.getCardFromEvent(e);
+    // Sometimes hover is less precise, so make sure we have an element
+    if (!el) return;
     __WEBPACK_IMPORTED_MODULE_1__Events__["a" /* default */].emit("list-item-hovered", __WEBPACK_IMPORTED_MODULE_0__QuakeCollectionSingleton__["a" /* default */].getInstance().getVisibleByIndex(el.dataset.quakeId));
+    return el;
   }
 
-  getCardFromEvent(e) {
+  /**
+  * Determine which card was clicked based on captured event
+  * @param {Event} e - The event captured by the root list element
+  * @returns {Object} - A reference to the specific card element that was clicked
+  */
+  static getCardFromEvent(e) {
     // Case 1: User clicks on card element itself
     if (e.target.classList.contains("card")) {
       return e.target;
@@ -451,11 +365,16 @@ class Sidebar {
     if (e.target.parentNode.classList.contains("card")) {
       return e.target.parentNode;
     }
+    return undefined;
   }
 
+  /**
+  * Render the list of cards
+  * @returns {String} - The innerHTML of the card list element
+  */
   render() {
     this.element.innerHTML = __WEBPACK_IMPORTED_MODULE_0__QuakeCollectionSingleton__["a" /* default */].getInstance().getAllVisible().reduce((acc, quake, index) => {
-      return acc + `<div class="card" data-quake-id=${index}>
+      return `${acc}<div class="card" data-quake-id=${index}>
           <div class="magnitude">
             ${quake.properties.mag}
           </div>
@@ -467,10 +386,172 @@ class Sidebar {
           </div>
         </div>`;
     }, "");
+    return this.element.innerHTML;
   }
 }
-/* harmony export (immutable) */ __webpack_exports__["a"] = Sidebar;
+/* harmony export (immutable) */ __webpack_exports__["a"] = CardList;
 
+
+/***/ }),
+/* 8 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Secrets__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__Events__ = __webpack_require__(0);
+
+
+
+// Set Mabbox access token
+mapboxgl.accessToken = __WEBPACK_IMPORTED_MODULE_0__Secrets__["a" /* default */].mapboxToken;
+
+const map = new mapboxgl.Map({
+  container: "map", // container id
+  style: "mapbox://styles/mapbox/dark-v9", // stylesheet location
+  center: [-74.5, 40], // starting position
+  zoom: 3 // starting zoom
+});
+
+/**
+* Set up map layers used in the application
+* @return {Boolean} True / False if layers were added
+*/
+function addMapLayers() {
+  // Sources hold data that is rendered in a layer
+  map.addSource("quakeMarkers", {
+    type: "geojson",
+    data: {
+      type: "FeatureCollection",
+      features: []
+    }
+  });
+  map.addLayer({
+    id: "the-quakeMarkers",
+    source: "quakeMarkers",
+    type: "circle",
+    paint: {
+      "circle-radius": {
+        property: "mag",
+        type: "exponential",
+        stops: [[0, 2], [1, 4], [2, 6], [4, 8], [5, 10], [6, 12], [7, 12], [8, 14], [9, 16], [10, 18]]
+      },
+      "circle-color": "#4817F6"
+    }
+  });
+  return map.getLayer("the-quakeMarkers") && map.getSource("quakeMarkers");
+}
+
+/**
+* Handle map load event
+* @return {number} The x value.
+*/
+function handleMapLoad() {
+  addMapLayers();
+  __WEBPACK_IMPORTED_MODULE_1__Events__["a" /* default */].emit("map-loaded");
+}
+
+/**
+* Handle when a user hovers over a map point
+* @param {Event} e - The event dispatched by the map
+* @return {Boolean} Whether an earthquake marker was hovered over
+*/
+function handleMapHover(e) {
+  // Ensure layer is present on map, in case loading is delayed
+  if (!map.getLayer("the-quakeMarkers")) return false;
+  const features = map.queryRenderedFeatures(e.point, {
+    layers: ["the-quakeMarkers"]
+  });
+  // Change the cursor style as a UI indicator.
+  if (features.length > 0) {
+    map.getCanvas().style.cursor = "pointer";
+    showPopup(features[0]);
+    return true;
+  }
+  // No feature was hoverd over, reset the point style
+  map.getCanvas().style.cursor = "";
+  return false;
+}
+
+/**
+* Handle when a user clicks on the map
+* @param {Event} e The event dispatched by the map
+* @return {Boolean} Whether an earthquake marker was clicked
+*/
+function handleMapClick(e) {
+  // Ensure layer is present on map, in case loading is delayed
+  if (!map.getLayer("the-quakeMarkers")) return false;
+  const features = map.queryRenderedFeatures(e.point, {
+    layers: ["the-quakeMarkers"]
+  });
+  // Change the cursor style as a UI indicator.
+  if (features.length > 0) {
+    flyTo(features[0]);
+    return true;
+  }
+  return false;
+}
+
+/**
+* Handle when a user clicks on the map
+* @param {Event} e The event dispatched by the map
+*/
+function handleMapMove(e) {
+  __WEBPACK_IMPORTED_MODULE_1__Events__["a" /* default */].emit("map-moved", map);
+}
+
+/**
+* Add the Quake GeoJSON FeatureCollection to the map
+* @param {GeoJSON} quakes The event dispatched by the map
+* @returns {Object} The GeoJSON source from the map
+*/
+function setQuakes(quakes) {
+  return map.getSource("quakeMarkers").setData(quakes);
+}
+
+/**
+* Wrapper for the Mapbox Gl JS flyTo function
+* @param {GeoJSON} quake The GeoJSON feature representing the map position to fly to
+* @returns {Object} The map object
+*/
+function flyTo(quake) {
+  return map.flyTo({
+    center: [quake.geometry.coordinates[0], quake.geometry.coordinates[1]],
+    zoom: 11
+  });
+}
+
+let popup = new mapboxgl.Popup();
+
+/**
+* Adds a popup to the map
+* @param {GeoJSON} quake The GeoJSON feature representing quake to fly to
+* @returns {Object} The map object
+*/
+function showPopup(quake) {
+  if (!quake) return; // if no data passed, bail
+  popup.remove();
+
+  let updatedDate = new Date(quake.properties.updated);
+
+  popup = new mapboxgl.Popup({ closeOnClick: false }).setLngLat([quake.geometry.coordinates[0], quake.geometry.coordinates[1]]).setHTML(`<h1>${quake.properties.mag}</h1>
+            <p>${quake.properties.place}</p>
+            <p>Updated ${updatedDate}</p>
+            <p><a href="${quake.properties.url}" target="_blank">More information</a>`).addTo(map);
+}
+
+// Event subscriptions
+__WEBPACK_IMPORTED_MODULE_1__Events__["a" /* default */].on("quakes-fetched", setQuakes);
+__WEBPACK_IMPORTED_MODULE_1__Events__["a" /* default */].on("list-item-clicked", flyTo);
+__WEBPACK_IMPORTED_MODULE_1__Events__["a" /* default */].on("list-item-hovered", showPopup);
+__WEBPACK_IMPORTED_MODULE_1__Events__["a" /* default */].on("quakes-fetched", setQuakes);
+
+// Mapbox Map-specific events
+map.on("load", handleMapLoad);
+map.on("mousemove", handleMapHover);
+map.on("click", handleMapClick);
+map.on("moveend", handleMapMove);
+
+/* harmony default export */ __webpack_exports__["a"] = (map);
 
 /***/ })
 /******/ ]);

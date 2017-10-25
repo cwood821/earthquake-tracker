@@ -1,11 +1,10 @@
 module.exports = {
-
   entry: {
     Main: "./js/Main.js"
   },
   output: {
     filename: "bundle.js",
-    library: 'earthquakeTracker'
+    library: "earthquakeTracker"
   },
   module: {
     loaders: [
@@ -14,6 +13,6 @@ module.exports = {
         loader: "babel-loader"
       }
     ]
-  }
-
+  },
+  watch: true
 };
