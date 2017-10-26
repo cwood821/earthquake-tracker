@@ -1,15 +1,22 @@
-import Events from "./Events";
+import events from "./Events";
 import map from "./Components/Map";
 import utils from "./Utils";
 
+/** Class representing a collection of earthquake data. */
 export default class QuakeCollection {
+  /**
+  * Create a QuakeCollection.
+  * @constructor
+  */
   constructor() {
     this.quakes = [];
     this.apiURL = "https://earthquake.usgs.gov/fdsnws/event/1/query";
-
-    // ?format=geojson&starttime=2017-10-23&endtime=2017-10-24"
   }
 
+  /**
+  * Fetch earthquake data from the USGS API
+  * @returns {Array} - An array of GeoJSON features representing earthquakes
+  */
   fetchQuakes() {
     // Date placeholder
     let today = new Date();
@@ -22,8 +29,6 @@ export default class QuakeCollection {
       1}-${today.getDate()}`;
     let endtime = `${tomorrow.getFullYear()}-${tomorrow.getMonth() +
       1}-${tomorrow.getDate()}`;
-    // timestamp to force non-caching
-    let timestamp = new Date();
 
     fetch(
       this.apiURL +
@@ -32,14 +37,15 @@ export default class QuakeCollection {
       .then(resp => resp.json())
       .then(quakes => {
         this.quakes = quakes.features;
-        Events.emit("quakes-fetched", quakes);
+        events.emit("quakes-fetched", quakes);
       });
-  }
-
-  getAll() {
     return this.quakes;
   }
 
+  /**
+  * Return all earthquakes visible within the current map boundaries
+  * @returns {Array} - GeoJSON features of visible earthquakes
+  */
   getAllVisible() {
     let neCoords = map
       .getBounds()
@@ -54,6 +60,10 @@ export default class QuakeCollection {
     );
   }
 
+  /**
+  * Fetch a specific earthquake from those visible on the map
+  * @returns {GeoJSON} - The earthquake at the given index
+  */
   getVisibleByIndex(index) {
     return this.getAllVisible()[index];
   }

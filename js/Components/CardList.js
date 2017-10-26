@@ -1,11 +1,12 @@
 import QuakeCollectionSingleton from "../QuakeCollectionSingleton";
-import Events from "../Events";
+import events from "../Events";
 import utils from "../Utils";
 
 /** Class representing a list of cards. */
 export default class CardList {
   /**
   * Create a point.
+  * @constructor
   * @param {String} selector - The CSS selector the DOM element that will hold the list of cards
   */
   constructor(selector) {
@@ -22,7 +23,7 @@ export default class CardList {
   */
   static handleClick(e) {
     const el = CardList.getCardFromEvent(e);
-    Events.emit(
+    events.emit(
       "list-item-clicked",
       QuakeCollectionSingleton.getInstance().getVisibleByIndex(
         el.dataset.quakeId
@@ -40,7 +41,7 @@ export default class CardList {
     const el = CardList.getCardFromEvent(e);
     // Sometimes hover is less precise, so make sure we have an element
     if (!el) return;
-    Events.emit(
+    events.emit(
       "list-item-hovered",
       QuakeCollectionSingleton.getInstance().getVisibleByIndex(
         el.dataset.quakeId
@@ -71,10 +72,9 @@ export default class CardList {
   * @returns {String} - The innerHTML of the card list element
   */
   render() {
-    this.element.innerHTML = QuakeCollectionSingleton.getInstance()
-      .getAllVisible()
-      .reduce((acc, quake, index) => {
-        return `${acc}<div class="card" data-quake-id=${index}>
+    const visibleQuakes = QuakeCollectionSingleton.getInstance().getAllVisible();
+    this.element.innerHTML = visibleQuakes.reduce((acc, quake, index) => {
+      return `${acc}<div class="card" data-quake-id=${index}>
           <div class="magnitude">
             ${quake.properties.mag}
           </div>
@@ -85,7 +85,7 @@ export default class CardList {
             ${utils.formatTime(quake.properties.time)}
           </div>
         </div>`;
-      }, "");
+    }, "");
     return this.element.innerHTML;
   }
 }

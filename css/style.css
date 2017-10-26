@@ -1,80 +1,77 @@
-/*
-  https://coolors.co/7f7a7b-a439cc-4817f6-e8dfe1-7fb069
-*/
-
 :root {
-  --white: ;
-  --dark: ;
-  --bright: ;
+  --bright-purple: #4817f6;
+  --semi-dark-purple: #0f0a19;
+  --dark-purple: #0a0710;
 }
 
 * {
-  font-family: "Poppins", sans-serif;
   box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
 }
 
 body,
 html {
-  padding: 0;
+  background: var(--dark-purple);
   margin: 0;
-  background: #0a0710;
   overflow: hidden;
+  padding: 0;
 }
 
 .loading {
-  z-index: 200;
+  align-items: center;
+  background: #000;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  position: fixed;
-  top: 0px;
-  left: 0px;
   height: 100vh;
-  width: 100%;
-  background: #000;
+  justify-content: center;
+  left: 0px;
+  position: fixed;
+  text-align: center;
+  top: 0px;
   transition: all 1s ease;
+  width: 100%;
+  z-index: 200;
 }
 
 .loading h1 {
-  width: 100%;
   color: #fff;
+  width: 100%;
 }
 
 .loading h2 {
-  width: 100%;
+  color: var(--bright-purple);
   font-weight: 300;
-  color: #4817f6;
+  width: 100%;
 }
 
 .header {
-  z-index: 100;
-  display: flex;
   align-items: center;
+  background: var(--semi-dark-purple);
+  box-shadow: 0 1px 4px rgba(10, 7, 17, 0.3);
+  display: flex;
+  height: 60px;
   justify-content: space-between;
+  left: 0;
   position: absolute;
   top: 0;
-  left: 0;
-  height: 60px;
   width: 100%;
-  background: #0f0a19;
-  box-shadow: 0px 1px 4px rgba(10, 7, 17, 0.3);
+  z-index: 100;
 }
 
 .site-logo {
-  padding-left: 0.75em;
-  display: inline-block;
   color: #fff;
+  display: inline-block;
+  padding-left: 0.75em;
 }
 
 .site-logo:hover,
 .site-logo:active {
-  cursor: pointer;
+  animation-iteration-count: infinite;
   animation: shake 0.82s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
-  transform: translate3d(0, 0, 0);
   backface-visibility: hidden;
+  cursor: pointer;
   perspective: 1000px;
+  transform: translate3d(0, 0, 0);
 }
 
 .icon-holder {
@@ -87,17 +84,17 @@ html {
 }
 
 .sidebar {
-  z-index: 150;
+  background: #fff;
   display: flex;
   flex-direction: row;
+  height: calc(100vh - 60px);
+  left: 0;
+  max-height: calc(100vh - 60px);
   position: absolute;
   top: 60px;
-  left: 0;
-  background: #fff;
-  height: calc(100vh - 60px);
-  max-height: calc(100vh - 60px);
-  width: 100%;
   transition: all 0.5s cubic-bezier(0.66, 0.22, 0.22, 0.89);
+  width: 100%;
+  z-index: 150;
 }
 
 .sidebar-hide {
@@ -105,29 +102,28 @@ html {
 }
 
 .card-titles {
-  position: fixed;
-  color: #7f7a7b;
-  font-size: 0.75rem;
-  background: #e8dfe1;
-  height: 40px;
-  display: flex;
   align-items: center;
+  background: #e8dfe1;
+  box-shadow: 0px 1px 4px rgba(10, 7, 17, 0.25);
+  color: #7f7a7b;
+  display: flex;
+  font-size: 0.75rem;
+  height: 40px;
   justify-content: left;
   justify-content: space-around;
+  padding: 1em;
+  position: fixed;
   text-align: left;
   width: 100%;
-  padding: 1em;
-  box-shadow: 0px 1px 4px rgba(10, 7, 17, 0.25);
 }
 
 .card-title_mag {
-  width: 100px;
-  /*border-right: 1px solid #333;*/
+  width: 100px; /*border-right: 1px solid #333;*/
 }
 
 .card-title_location {
-  width: 230px;
   padding-left: 20px;
+  width: 230px;
 }
 
 .card-title_time {
@@ -137,94 +133,91 @@ html {
 .card-holder {
   display: flex;
   flex-direction: column;
-  position: absolute;
   height: calc(100% - 40px);
+  overflow-y: scroll;
+  position: absolute;
+  top: 40px;
   width: 100%;
   width: 100vw;
-  top: 40px;
-  overflow-y: scroll;
 }
 
 .card {
-  background: #fff;
-  display: flex;
   align-items: center;
+  background: #fff;
+  border-bottom: 1px solid #e8dfe1;
+  border-left: 4px solid transparent;
+  clear: both;
+  display: flex;
   justify-content: center;
   justify-content: space-around;
-  width: 100%;
   min-height: 80px;
-  border-bottom: 1px solid #e8dfe1;
-  border-left: 5px solid transparent;
   padding: 1em;
-  clear: both;
-  transition: all 0.3s ease;
+  transition: all 0.3s ease-in-out;
+  width: 100%;
 }
 
 .card:hover,
 .card:active {
-  border-left: 5px solid #4817f6;
-  margin-left: 0px;
-  cursor: pointer;
   background: rgba(72, 23, 246, 0.05);
+  border-left: 4px solid var(--bright-purple);
+  cursor: pointer;
+  margin-left: 0px;
 }
 
 .magnitude {
-  width: 100px;
-  font-weight: 700;
+  color: var(--semiDarkPurple);
   font-size: 2em;
-  color: #0f0a19;
+  font-weight: 700;
+  width: 100px;
 }
 
 .description {
-  padding: 0px 15px;
-  width: 230px;
+  color: #7f7a7b;
   font-size: 0.8rem;
   font-weight: 300;
-  color: #7f7a7b;
+  padding: 0px 15px;
+  width: 230px;
 }
 
 .time {
-  width: 70px;
-  text-align: center;
-  padding: 0.35rem;
   background: #504c57;
+  border-radius: 6px;
   color: #fff;
   font-size: 0.5rem;
-  border-radius: 6px;
+  padding: 0.35rem;
+  text-align: center;
+  width: 70px;
 }
 
 .map-container {
-  z-index: 50;
-  position: absolute;
-  top: 60px;
-  left: 0px;
   height: 100%;
   height: 100vh;
+  left: 0px;
+  position: absolute;
+  top: 60px;
   width: 100%;
   width: 100vw;
   width: calc(100%-10px);
+  z-index: 50;
 }
 
 #map {
-  z-index: 200;
   height: 100vh;
   height: calc(100vh - 60px);
   width: 100vw;
+  z-index: 200;
 }
 
 .mapboxgl-popup a {
   color: #4817f6;
 }
 
-.mapboxgl-popup h1 {
-}
-
 .quaking {
+  animation-iteration-count: infinite;
   animation: shake 0.82s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
-  transform: translate3d(0, 0, 0);
   backface-visibility: hidden;
   perspective: 1000px;
-  animation-iteration-count: infinite;
+  transform: translate3d(0, 0, 0);
 }
 
 /* https://css-tricks.com/snippets/css/shake-css-keyframe-animation/ */
@@ -257,26 +250,26 @@ html {
   }
 
   .sidebar {
-    z-index: 150;
+    background: #fff;
     display: flex;
     flex-direction: row;
+    height: calc(100% - 60px);
+    left: 0;
+    max-height: calc(100% - 60px);
     position: absolute;
     top: 60px;
-    left: 0;
-    background: #fff;
-    height: calc(100% - 60px);
-    max-height: calc(100% - 60px);
     width: 350px;
+    z-index: 150;
   }
 
   .map-container {
-    z-index: 180; /* on desktop, must be higher; opposite on mobile */
-    position: absolute;
-    top: 60px;
-    left: 350px;
     height: 100%;
     height: 100vh;
+    left: 350px;
+    position: absolute;
+    top: 60px;
     width: calc(100%-350px);
+    z-index: 180; /* on desktop, must be higher; opposite on mobile */
   }
 
   .card-titles {

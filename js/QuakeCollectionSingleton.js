@@ -3,13 +3,15 @@ import QuakeCollection from "./QuakeCollection";
 // Holder for the singleton in this scope
 let singleton;
 
+/** Class representing an interface for creating or retrieving instances
+    of the QuakeCollection class. */
 export default class QuakeCollectionSingleton {
+  /**
+  * Return an existing instance of QuakeCollection if on exists, else create one
+  * @returns {Object} - An instance of the QuakeCollection class
+  */
   static getInstance() {
-    if (singleton) {
-      return singleton;
-    } else {
-      singleton = new QuakeCollection();
-      return singleton;
-    }
+    singleton = singleton ? singleton : new QuakeCollection();
+    return singleton;
   }
 }

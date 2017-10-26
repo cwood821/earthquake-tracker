@@ -101,30 +101,6 @@ const Events = {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__QuakeCollection__ = __webpack_require__(4);
-
-
-// Holder for the singleton in this scope
-let singleton;
-
-class QuakeCollectionSingleton {
-  static getInstance() {
-    if (singleton) {
-      return singleton;
-    } else {
-      singleton = new __WEBPACK_IMPORTED_MODULE_0__QuakeCollection__["a" /* default */]();
-      return singleton;
-    }
-  }
-}
-/* harmony export (immutable) */ __webpack_exports__["a"] = QuakeCollectionSingleton;
-
-
-/***/ }),
-/* 2 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
 /**
 * Return formatted date based on a given timestamp.
 * @param {Timestamp} timestamp A number to check against minimum and maximum
@@ -193,15 +169,41 @@ function inBounds(neCoords, swCoords, obj) {
 });
 
 /***/ }),
+/* 2 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__QuakeCollection__ = __webpack_require__(4);
+
+
+// Holder for the singleton in this scope
+let singleton;
+
+/** Class representing an interface for creating or retrieving instances
+    of the QuakeCollection class. */
+class QuakeCollectionSingleton {
+  /**
+  * Return an existing instance of QuakeCollection if on exists, else create one
+  * @returns {Object} - An instance of the QuakeCollection class
+  */
+  static getInstance() {
+    singleton = singleton ? singleton : new __WEBPACK_IMPORTED_MODULE_0__QuakeCollection__["a" /* default */]();
+    return singleton;
+  }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = QuakeCollectionSingleton;
+
+
+/***/ }),
 /* 3 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__QuakeCollectionSingleton__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__QuakeCollectionSingleton__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__Components_CardList__ = __webpack_require__(7);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__Events__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__Utils__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__Utils__ = __webpack_require__(1);
 
 
 
@@ -214,7 +216,7 @@ const iconToggle = document.querySelector(".icon-holder");
 iconToggle.addEventListener("click", __WEBPACK_IMPORTED_MODULE_3__Utils__["a" /* default */].toggleSidebar);
 
 /**
-* Start the application by hiding load screen and rendering the UI
+* Start the application by hiding the load overlay and rendering the UI
 */
 function startApplication() {
   // Hide the loading overlay
@@ -239,20 +241,27 @@ __WEBPACK_IMPORTED_MODULE_2__Events__["a" /* default */].on("map-moved", cardLis
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Events__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__Components_Map__ = __webpack_require__(8);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__Utils__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__Components_Map__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__Utils__ = __webpack_require__(1);
 
 
 
 
+/** Class representing a collection of earthquake data. */
 class QuakeCollection {
+  /**
+  * Create a QuakeCollection.
+  * @constructor
+  */
   constructor() {
     this.quakes = [];
     this.apiURL = "https://earthquake.usgs.gov/fdsnws/event/1/query";
-
-    // ?format=geojson&starttime=2017-10-23&endtime=2017-10-24"
   }
 
+  /**
+  * Fetch earthquake data from the USGS API
+  * @returns {Array} - An array of GeoJSON features representing earthquakes
+  */
   fetchQuakes() {
     // Date placeholder
     let today = new Date();
@@ -263,26 +272,29 @@ class QuakeCollection {
     let format = "geojson";
     let startTime = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
     let endtime = `${tomorrow.getFullYear()}-${tomorrow.getMonth() + 1}-${tomorrow.getDate()}`;
-    // timestamp to force non-caching
-    let timestamp = new Date();
 
     fetch(this.apiURL + `?format=${format}&starttime=${startTime}&endtime=${endtime}`) // Call the fetch function passing the url of the API as a parameter
     .then(resp => resp.json()).then(quakes => {
       this.quakes = quakes.features;
       __WEBPACK_IMPORTED_MODULE_0__Events__["a" /* default */].emit("quakes-fetched", quakes);
     });
-  }
-
-  getAll() {
     return this.quakes;
   }
 
+  /**
+  * Return all earthquakes visible within the current map boundaries
+  * @returns {Array} - GeoJSON features of visible earthquakes
+  */
   getAllVisible() {
     let neCoords = __WEBPACK_IMPORTED_MODULE_1__Components_Map__["a" /* default */].getBounds().getNorthEast().toArray();
     let swCoords = __WEBPACK_IMPORTED_MODULE_1__Components_Map__["a" /* default */].getBounds().getSouthWest().toArray();
     return this.quakes.filter(quake => __WEBPACK_IMPORTED_MODULE_2__Utils__["a" /* default */].inBounds(neCoords, swCoords, quake));
   }
 
+  /**
+  * Fetch a specific earthquake from those visible on the map
+  * @returns {GeoJSON} - The earthquake at the given index
+  */
   getVisibleByIndex(index) {
     return this.getAllVisible()[index];
   }
@@ -291,109 +303,7 @@ class QuakeCollection {
 
 
 /***/ }),
-/* 5 */,
-/* 6 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-const secrets = {
-  mapboxToken: "pk.eyJ1IjoiY3dvb2Q4MjEiLCJhIjoiY2oxanFxbjdqMDFvNTJxb2gwc2NlZ2pkaCJ9.sWvSP0X0HGPkK_BBESCrTw"
-};
-
-/* harmony default export */ __webpack_exports__["a"] = (secrets);
-
-/***/ }),
-/* 7 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__QuakeCollectionSingleton__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__Events__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__Utils__ = __webpack_require__(2);
-
-
-
-
-/** Class representing a list of cards. */
-class CardList {
-  /**
-  * Create a point.
-  * @param {String} selector - The CSS selector the DOM element that will hold the list of cards
-  */
-  constructor(selector) {
-    this.element = document.querySelector(selector);
-
-    this.element.addEventListener("click", CardList.handleClick.bind(this));
-    this.element.addEventListener("mouseover", CardList.handleHover.bind(this));
-  }
-
-  /**
-  * Handle the click of a card in the list. Uses event propogation.
-  * @param {Event} e - The event that propogates through this.element
-  * @returns {Object} - A reference to the element that was clicked
-  */
-  static handleClick(e) {
-    const el = CardList.getCardFromEvent(e);
-    __WEBPACK_IMPORTED_MODULE_1__Events__["a" /* default */].emit("list-item-clicked", __WEBPACK_IMPORTED_MODULE_0__QuakeCollectionSingleton__["a" /* default */].getInstance().getVisibleByIndex(el.dataset.quakeId));
-    return el;
-  }
-
-  /**
-  * Handle user hover over a card in the list. Uses event propogation.
-  * @param {Event} e - The event that propogates through this.element
-  * @returns {Object} - A reference to the element that was hovered over
-  */
-  static handleHover(e) {
-    const el = CardList.getCardFromEvent(e);
-    // Sometimes hover is less precise, so make sure we have an element
-    if (!el) return;
-    __WEBPACK_IMPORTED_MODULE_1__Events__["a" /* default */].emit("list-item-hovered", __WEBPACK_IMPORTED_MODULE_0__QuakeCollectionSingleton__["a" /* default */].getInstance().getVisibleByIndex(el.dataset.quakeId));
-    return el;
-  }
-
-  /**
-  * Determine which card was clicked based on captured event
-  * @param {Event} e - The event captured by the root list element
-  * @returns {Object} - A reference to the specific card element that was clicked
-  */
-  static getCardFromEvent(e) {
-    // Case 1: User clicks on card element itself
-    if (e.target.classList.contains("card")) {
-      return e.target;
-    }
-    // Case 2: User clicks on a magnitude or time, etc, in card
-    if (e.target.parentNode.classList.contains("card")) {
-      return e.target.parentNode;
-    }
-    return undefined;
-  }
-
-  /**
-  * Render the list of cards
-  * @returns {String} - The innerHTML of the card list element
-  */
-  render() {
-    this.element.innerHTML = __WEBPACK_IMPORTED_MODULE_0__QuakeCollectionSingleton__["a" /* default */].getInstance().getAllVisible().reduce((acc, quake, index) => {
-      return `${acc}<div class="card" data-quake-id=${index}>
-          <div class="magnitude">
-            ${quake.properties.mag}
-          </div>
-          <div class="description">
-            ${quake.properties.place}
-          </div>
-           <div class="time">
-            ${__WEBPACK_IMPORTED_MODULE_2__Utils__["a" /* default */].formatTime(quake.properties.time)}
-          </div>
-        </div>`;
-    }, "");
-    return this.element.innerHTML;
-  }
-}
-/* harmony export (immutable) */ __webpack_exports__["a"] = CardList;
-
-
-/***/ }),
-/* 8 */
+/* 5 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -443,7 +353,6 @@ function addMapLayers() {
 
 /**
 * Handle map load event
-* @return {number} The x value.
 */
 function handleMapLoad() {
   addMapLayers();
@@ -539,19 +448,122 @@ function showPopup(quake) {
             <p><a href="${quake.properties.url}" target="_blank">More information</a>`).addTo(map);
 }
 
-// Event subscriptions
+// Inner-application event subscriptions
 __WEBPACK_IMPORTED_MODULE_1__Events__["a" /* default */].on("quakes-fetched", setQuakes);
 __WEBPACK_IMPORTED_MODULE_1__Events__["a" /* default */].on("list-item-clicked", flyTo);
 __WEBPACK_IMPORTED_MODULE_1__Events__["a" /* default */].on("list-item-hovered", showPopup);
 __WEBPACK_IMPORTED_MODULE_1__Events__["a" /* default */].on("quakes-fetched", setQuakes);
 
-// Mapbox Map-specific events
+// Mapbox map-specific events
 map.on("load", handleMapLoad);
 map.on("mousemove", handleMapHover);
 map.on("click", handleMapClick);
 map.on("moveend", handleMapMove);
 
 /* harmony default export */ __webpack_exports__["a"] = (map);
+
+/***/ }),
+/* 6 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+const secrets = {
+  mapboxToken: "pk.eyJ1IjoiY3dvb2Q4MjEiLCJhIjoiY2oxanFxbjdqMDFvNTJxb2gwc2NlZ2pkaCJ9.sWvSP0X0HGPkK_BBESCrTw"
+};
+
+/* harmony default export */ __webpack_exports__["a"] = (secrets);
+
+/***/ }),
+/* 7 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__QuakeCollectionSingleton__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__Events__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__Utils__ = __webpack_require__(1);
+
+
+
+
+/** Class representing a list of cards. */
+class CardList {
+  /**
+  * Create a point.
+  * @constructor
+  * @param {String} selector - The CSS selector the DOM element that will hold the list of cards
+  */
+  constructor(selector) {
+    this.element = document.querySelector(selector);
+
+    this.element.addEventListener("click", CardList.handleClick.bind(this));
+    this.element.addEventListener("mouseover", CardList.handleHover.bind(this));
+  }
+
+  /**
+  * Handle the click of a card in the list. Uses event propogation.
+  * @param {Event} e - The event that propogates through this.element
+  * @returns {Object} - A reference to the element that was clicked
+  */
+  static handleClick(e) {
+    const el = CardList.getCardFromEvent(e);
+    __WEBPACK_IMPORTED_MODULE_1__Events__["a" /* default */].emit("list-item-clicked", __WEBPACK_IMPORTED_MODULE_0__QuakeCollectionSingleton__["a" /* default */].getInstance().getVisibleByIndex(el.dataset.quakeId));
+    return el;
+  }
+
+  /**
+  * Handle user hover over a card in the list. Uses event propogation.
+  * @param {Event} e - The event that propogates through this.element
+  * @returns {Object} - A reference to the element that was hovered over
+  */
+  static handleHover(e) {
+    const el = CardList.getCardFromEvent(e);
+    // Sometimes hover is less precise, so make sure we have an element
+    if (!el) return;
+    __WEBPACK_IMPORTED_MODULE_1__Events__["a" /* default */].emit("list-item-hovered", __WEBPACK_IMPORTED_MODULE_0__QuakeCollectionSingleton__["a" /* default */].getInstance().getVisibleByIndex(el.dataset.quakeId));
+    return el;
+  }
+
+  /**
+  * Determine which card was clicked based on captured event
+  * @param {Event} e - The event captured by the root list element
+  * @returns {Object} - A reference to the specific card element that was clicked
+  */
+  static getCardFromEvent(e) {
+    // Case 1: User clicks on card element itself
+    if (e.target.classList.contains("card")) {
+      return e.target;
+    }
+    // Case 2: User clicks on a magnitude or time, etc, in card
+    if (e.target.parentNode.classList.contains("card")) {
+      return e.target.parentNode;
+    }
+    return undefined;
+  }
+
+  /**
+  * Render the list of cards
+  * @returns {String} - The innerHTML of the card list element
+  */
+  render() {
+    const visibleQuakes = __WEBPACK_IMPORTED_MODULE_0__QuakeCollectionSingleton__["a" /* default */].getInstance().getAllVisible();
+    this.element.innerHTML = visibleQuakes.reduce((acc, quake, index) => {
+      return `${acc}<div class="card" data-quake-id=${index}>
+          <div class="magnitude">
+            ${quake.properties.mag}
+          </div>
+          <div class="description">
+            ${quake.properties.place}
+          </div>
+           <div class="time">
+            ${__WEBPACK_IMPORTED_MODULE_2__Utils__["a" /* default */].formatTime(quake.properties.time)}
+          </div>
+        </div>`;
+    }, "");
+    return this.element.innerHTML;
+  }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = CardList;
+
 
 /***/ })
 /******/ ]);

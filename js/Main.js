@@ -1,6 +1,6 @@
 import QuakeCollectionSingleton from "./QuakeCollectionSingleton";
 import CardList from "./Components/CardList";
-import Events from "./Events";
+import events from "./Events";
 import Utils from "./Utils";
 
 const quakeCollection = QuakeCollectionSingleton.getInstance();
@@ -10,7 +10,7 @@ const iconToggle = document.querySelector(".icon-holder");
 iconToggle.addEventListener("click", Utils.toggleSidebar);
 
 /**
-* Start the application by hiding load screen and rendering the UI
+* Start the application by hiding the load overlay and rendering the UI
 */
 function startApplication() {
   // Hide the loading overlay
@@ -21,10 +21,10 @@ function startApplication() {
 }
 
 // Listen for map to load, then fetch quakes
-Events.on("map-loaded", () => {
+events.on("map-loaded", () => {
   quakeCollection.fetchQuakes();
 });
 // When quakes are fetched, show the application
-Events.on("quakes-fetched", startApplication);
+events.on("quakes-fetched", startApplication);
 // Re-render the cardList to show quakes in map boundaries
-Events.on("map-moved", cardList.render.bind(cardList));
+events.on("map-moved", cardList.render.bind(cardList));

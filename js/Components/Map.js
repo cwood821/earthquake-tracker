@@ -53,7 +53,6 @@ function addMapLayers() {
 
 /**
 * Handle map load event
-* @return {number} The x value.
 */
 function handleMapLoad() {
   addMapLayers();
@@ -155,13 +154,13 @@ function showPopup(quake) {
     .addTo(map);
 }
 
-// Event subscriptions
+// Inner-application event subscriptions
 events.on("quakes-fetched", setQuakes);
 events.on("list-item-clicked", flyTo);
 events.on("list-item-hovered", showPopup);
 events.on("quakes-fetched", setQuakes);
 
-// Mapbox Map-specific events
+// Mapbox map-specific events
 map.on("load", handleMapLoad);
 map.on("mousemove", handleMapHover);
 map.on("click", handleMapClick);
